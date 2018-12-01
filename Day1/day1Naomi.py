@@ -1,4 +1,4 @@
-file = "frequency.txt"
+file = "Day1/frequency.txt"
 
 sum = 0
 freqchanges = []
