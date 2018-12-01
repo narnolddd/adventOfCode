@@ -1,10 +1,11 @@
+from collections import defaultdict
 file = "Day1/frequency.txt"
 
 sum = 0
 # for storing the frequency changes from the file
 freqchanges = []
 # for keeping track of the current frequency
-values = []
+values = defaultdict(lambda:-1)
 
 # Reads the file
 f = open(file,'r')
@@ -17,13 +18,13 @@ while True:
 
 # First loops through to get sum of frequency changes in text file, then loops until a frequency is repeated
 index = 0
-values.append(0)
+values[0]=1
 firstLoop=True
 while True:
     sum+=freqchanges[index]
-    if sum in values:
+    if values[sum]>0:
         break
-    values.append(sum)
+    values[sum]=1
     index = index + 1
     if index == len(freqchanges):
         if firstLoop:
