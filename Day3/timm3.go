@@ -23,6 +23,8 @@ func main() {
 	defer file.Close()
 
 	claims := make([]claim, 0)
+	max_x := 0
+	max_y := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -34,9 +36,19 @@ func main() {
 		height, _ := strconv.Atoi(match[5])
 		claims = append(claims, claim{id, x, y, width, height})
 
+		if tmp := x + width; tmp > max_x {
+			max_x = tmp
+		}
+		if tmp := y + height; tmp > max_y {
+			max_y = tmp
+		}
 	}
 
-	fabric := [1000][1000]int{}
+	fabric := make([][]int, max_x)
+	for i, _ := range fabric {
+		fabric[i] = make([]int, max_y)
+	}
+
 	for _, claim := range claims {
 		for i := claim.x; i < claim.x+claim.width; i++ {
 			for j := claim.y; j < claim.y+claim.height; j++ {
