@@ -6,7 +6,7 @@ file = "day5/input.txt"
 polymer = ""
 
 with open(file,'r') as f:
-    polymer=f.readline()
+    polymer=f.readline().strip()
 
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 alphabetcap= "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
