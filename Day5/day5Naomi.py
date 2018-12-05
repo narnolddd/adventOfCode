@@ -33,7 +33,7 @@ def string2vect(word):
 
 def reducevec(vec):
     length = len(vec)
-    print(length)
+    #print(length)
     while True:
         i=0
         while True:
@@ -52,12 +52,18 @@ def reducevec(vec):
             #print(length)
     return vec
 
-test = string2vect('hHheLloOE')
-testreduced=reducevec(test)
-print(vec2string(testreduced))
-print(len(testreduced))
+def reducestring(word):
+    return vec2string(reducevec(string2vect(word)))
 
-polymervec = string2vect(polymer)
-reducedvec = reducevec(polymervec)
-print(vec2string(reducedvec))
-print(len(reducedvec)-1) #Why minus 1???
+polymerreduced=reducestring(polymer)
+print(len(polymerreduced))
+
+bestletter="a"
+min = len(polymerreduced)
+for i in range(26):
+    polynew = polymerreduced.replace(alphabet[i],"")
+    polynew = polynew.replace(alphabetcap[i],"")
+    if len(reducestring(polynew))<min:
+        bestletter=alphabet[i]
+        min = len(reducestring(polynew))
+print(min,bestletter)
