@@ -14,6 +14,8 @@ with open(file,'r') as f:
 scores=np.zeros(nplayers)
 marblestack=[]
 
+
+## Part 1 using a List datatype
 player = 1
 current = 1
 marblestack.append(0)
@@ -41,7 +43,7 @@ for marble in range(2,nmarbles+1):
 
 print(max(scores))
 
-#nmarbles = 100*nmarbles
+# Part 2 using a Double ended queue (deque) datatype
 scores = np.zeros((nplayers),dtype=int)
 
 nmarbles = 100*nmarbles
