@@ -2,7 +2,7 @@ import numpy as np
 from operator import itemgetter
 from collections import defaultdict
 from collections import Counter as ct
-file = "Day6/input.txt"
+file = "Day6/ruben.txt"
 
 coordinates=[]
 
@@ -19,15 +19,12 @@ gridxmin, gridxmax = min(coordinates,key=lambda x:x['x'])['x'], max(coordinates,
 xlen = gridxmax - gridxmin
 gridymin, gridymax = min(coordinates,key=lambda x:x['y'])['y'], max(coordinates,key=lambda x:x['y'])['y']
 ylen = gridymax - gridymin
-print(gridxmin, gridymin)
-print(gridxmax,gridymax)
 
 def closest(coord):
     x,y=coord[0],coord[1]
     nearest=[]
     distances = [dict(id=row['id'],dist=manhatton_distance(row['x'],row['y'],x,y)) for row in coordinates]
     sorteddistances = sorted(distances,key=itemgetter('dist'))
-    print(sorteddistances)
     d0=sorteddistances[0]['dist']
     nearest.append(sorteddistances[0]['id'])
     sorteddistances.pop(0)
@@ -39,8 +36,10 @@ def closest(coord):
             break
     return nearest
 
+print(closest([0,0]))
+
 grid = [[[i,j] for j in range(gridymin,gridymax+1)] for i in range(gridxmin,gridxmax+1)]
-print(grid[0][0],grid[0][ylen],grid[xlen][0],grid[xlen][ylen])
+
 occupants = [[[]for y in range(ylen+1)] for x in range(xlen+1)]
 
 is_infinite=defaultdict(lambda:False)
