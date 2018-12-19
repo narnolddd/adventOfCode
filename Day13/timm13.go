@@ -55,7 +55,7 @@ func printTrack(track [][]int, carts []cart) {
 			cartCount := 0
 			var cartDirection int
 			for _, cart := range carts {
-				if cart.x == i && cart.y == j {
+				if cart.direction != -1 && cart.x == i && cart.y == j {
 					cartCount++
 					cartDirection = cart.direction
 				}
@@ -89,7 +89,6 @@ func main() {
 			trackWidth = lineLen
 		}
 		trackHeight++
-		fmt.Println(line)
 	}
 
 	track := make([][]int, 0)
@@ -131,11 +130,10 @@ func main() {
 		}
 		track = append(track, row)
 	}
-	fmt.Println(track)
-	fmt.Println(carts)
+	nCarts := len(carts)
 
 Loop:
-	for t := 0; t < 250; t++ {
+	for t := 0; t < 25000; t++ {
 		// sort carts into turn order
 		sort.Slice(carts, func(i, j int) bool {
 			if carts[i].y != carts[j].y {
@@ -144,9 +142,12 @@ Loop:
 				return carts[i].x < carts[j].x
 			}
 		})
+		// move carts
 		for i := range carts {
 			cart := &carts[i]
 			switch cart.direction {
+			case -1:
+				continue
 			case 1:
 				cart.x -= 1
 				switch track[cart.x][cart.y] {
@@ -244,19 +245,27 @@ Loop:
 			default:
 				panic("Unknown movement direction")
 			}
-			// check for crash
-			for c1 := 0; c1 < len(carts); c1++ {
-				for c2 := c1 + 1; c2 < len(carts); c2++ {
-					if carts[c1].x == carts[c2].x && carts[c1].y == carts[c2].y {
-						fmt.Printf("Crash at %d,%d\n", carts[c1].y, carts[c1].x)
-						break Loop
-					}
+			for j := 0; j < len(carts); j++ {
+				if i == j {
+					continue
+				}
+				if carts[i].direction != -1 && carts[j].direction != -1 && carts[i].x == carts[j].x && carts[i].y == carts[j].y {
+					fmt.Printf("Crash at %d,%d. Removing Carts...\n", carts[i].y, carts[i].x)
+					carts[i].direction = -1
+					carts[j].direction = -1
+					nCarts -= 2
 				}
 			}
 		}
-		fmt.Printf("%d:\n", t)
+		if nCarts == 1 {
+			for _, cart := range carts {
+				if cart.direction != -1 {
+					fmt.Printf("Last cart at %d,%d\n", cart.y, cart.x)
+					break Loop
+				}
+			}
+		}
+		//fmt.Printf("%d:\n", t)
 		//printTrack(track, carts)
-
 	}
-
 }
