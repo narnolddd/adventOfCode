@@ -43,7 +43,6 @@ func SquareToRune(s Square) rune {
 func printWorld() {
 	for i := 0; i < len(world[0]); i++ {
 		for _, row := range world {
-
 			fmt.Print(string(SquareToRune(row[i])))
 		}
 		fmt.Println()
@@ -143,32 +142,6 @@ func CheckSettleWater(x, y int) bool {
 	return leftStopFound && rightStopFound
 }
 
-func FillWater(x, y int) {
-	fmt.Println("FillWater", x, y)
-	if y >= len(world[0])-1 {
-		return
-	}
-
-	if world[x][y] == Clay || world[x][y] == Water || world[x][y] == WetSand {
-		return
-	}
-
-	if world[x][y] == Sand {
-		world[x][y] = WetSand
-	}
-
-	printWorld()
-
-	FillWater(x, y+1)
-	if CheckSettleWater(x, y) {
-		world[x][y] = Water
-	}
-	if y < len(world[0])-1 {
-		FillWater(x-1, y)
-		FillWater(x+1, y)
-	}
-}
-
 func FillWaterDown(x, y int) {
 	if world[x][y] != Sand {
 		//fmt.Println("No sand... Cannot flow")
@@ -183,14 +156,13 @@ func FillWaterDown(x, y int) {
 	}
 
 	FillWaterDown(x, y+1)
-
-	if CheckSettleWater(x, y) {
-		world[x][y] = Water
-	}
-
 	if world[x][y+1] == Clay || world[x][y+1] == Water {
 		FillWaterLeft(x-1, y)
 		FillWaterRight(x+1, y)
+	}
+
+	if CheckSettleWater(x, y) {
+		world[x][y] = Water
 	}
 }
 
