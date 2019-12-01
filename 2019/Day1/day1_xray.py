@@ -5,10 +5,18 @@ Created on Sun Dec  1 10:42:10 2019
 @author: Administrator
 """
 
-#fule = mass/3 - 2
+#fuel = mass/3 - 2
 
 fuel_sum = 0
-f = open("input_d1.txt")
+f = open("input.txt")
+line = f.readline()
+while line:
+	fuel_sum += int(int(line)/3)-2
+	line = f.readline()
+print("total fuel is: " + str(fuel_sum))
+
+fuel_sum = 0
+f = open("input.txt")
 line = f.readline()
 while line:
     fuel_p = 0
@@ -21,4 +29,4 @@ while line:
     fuel_sum += fuel_p
     line = f.readline()
 
-print("total fuel is"+str(fuel_sum))
+print("total fuel is： " + str(fuel_sum))
