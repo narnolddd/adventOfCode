@@ -1,3 +1,3 @@
-Day*/input*.txt
+*Day*/input*.txt
 util/sessionid.txt
 .DS_Store
