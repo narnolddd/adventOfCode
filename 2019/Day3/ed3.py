@@ -7,7 +7,6 @@ def distance(p1, p2):
 def check_colision(grid, colisions, pos, pnum, steps):
     if pos in grid:
         if grid[pos].path != pnum:
-            print (grid[pos], steps)
             colisions.append( (grid[pos], Point(pos[0], pos[1], pnum, steps)) )
     else:     
         grid[newpos] = Point (newpos[0], newpos[1], pnum, steps)
@@ -28,30 +27,18 @@ for path in paths:
     for m in moves:
         d = m[0]
         inc = int(m[1:])
-        if d == 'U':
-            for i in range(0, inc):
-                steps += 1
+        for i in range(0, inc):
+            steps += 1
+            if d == 'U':
                 newpos = (pos[0], pos[1] + 1)
-                check_colision(grid, colisions, newpos, pnum, steps)
-                pos = newpos 
-        elif d == 'D':
-            for i in range(0, inc):
-                steps += 1
+            elif d == 'D':
                 newpos = (pos[0], pos[1] - 1)
-                check_colision(grid, colisions, newpos, pnum, steps)
-                pos = newpos 
-        elif d == 'L':
-            for i in range(0, inc):
-                steps += 1
+            elif d == 'L':
                 newpos = (pos[0] - 1, pos[1])
-                check_colision(grid, colisions, newpos, pnum, steps)
-                pos = newpos  
-        elif d == 'R':
-            for i in range(0, inc):
-                steps += 1
+            elif d == 'R':
                 newpos = (pos[0] + 1, pos[1])
-                check_colision(grid, colisions, newpos, pnum, steps)
-                pos = newpos
+            check_colision(grid, colisions, newpos, pnum, steps)
+            pos = newpos 
     pnum += 1 
 
 dist = min( [distance((x[0].x, x[1].y), (0,0)) for x in colisions] )
