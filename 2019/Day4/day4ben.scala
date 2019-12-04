@@ -1,5 +1,7 @@
   import scala.util.matching.Regex
 
+
+
   def incrementing(x:String):Boolean = if(x.isEmpty) true else if(x.size==1) true else if(x.head <= x.tail.head) incrementing(x.tail) else false
   def secondCheck(x:String,count:Int,lastChar:Char) :Boolean =
     if (count==2) {
