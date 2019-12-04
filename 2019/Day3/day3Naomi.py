@@ -69,8 +69,8 @@ true_intersections.sort(key = lambda x: x[1])
 
 print(true_intersections[0])
 
+min_steps=-1
 for i in range(len(wire1_coords)):
-    min_steps=-1
     for j in range(len(wire2_coords)):
         w1,nsteps1 = traverse_wire(wires[0],i)
         w2,nsteps2= traverse_wire(wires[1],j)
