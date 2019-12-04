@@ -11,7 +11,7 @@ def check_colision(grid, colisions, pos, pnum, steps):
     else:     
         grid[newpos] = Point (newpos[0], newpos[1], pnum, steps)
 
-f = open('input', 'r')
+f = open('input.txt', 'r')
 
 paths = [x for x in f.readlines()]
 
@@ -22,6 +22,7 @@ colisions = []
 pnum = 1
 for path in paths:
     moves = path.strip('\n').split(',')
+    print("moves is: "+str(moves))
     pos = (0, 0)
     steps = 0
     for m in moves:
