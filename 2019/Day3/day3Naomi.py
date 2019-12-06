@@ -31,7 +31,7 @@ def intersection_present(start1, finish1, start2, finish2):
 def manhattan(x):
     return abs(x[0])+abs(x[1])
 
-wire1_coords = []
+wire1_coords =
 wire2_coords = []
 
 def traverse_wire(wire,nrows):
