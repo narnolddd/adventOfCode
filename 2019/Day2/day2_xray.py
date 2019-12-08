@@ -7,6 +7,8 @@ Created on Mon Dec  2 10:41:16 2019
 99: program finished
 1 : adds num in two positions and store the result in third position.
 2 : multiplies num in two positions and store the result in third position.
+3 : takes an input to store in a specific pos
+4 : outputs the value in the specific pos
 """
 
 
