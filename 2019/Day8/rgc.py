@@ -21,3 +21,15 @@ for l in range(layers):
 	if best[0] == 0 or best[0] > count[0]:
 		best= count.copy()
 print("Part 1",best[1]*best[2])
+
+for h in range(height):
+	for w in range(width):
+		#for l in range(layers-1,-1,-1):
+		for l in range(layers):
+			pos=l*(height*width)+h*width+w
+			num= int(data[pos])
+			if num == 1 or num == 0:
+				print(num,end='')
+				break
+	print()
+				
