@@ -12,10 +12,13 @@ gradients=defaultdict(lambda: False)
 gradients[(1,0)]=True
 gradients[(0,1)]=True
 
+# Get all possible direction vectors. Only need half of the plane as visibility is reflexive
+
 for x in range(-nrow,nrow):
     for y in range(ncol):
         if x==0 or y==0:
             continue
+        # Only take gradient in simplest form
         xjump, yjump = int(x/gcd(x,y)), int(y/gcd(x,y))
         if gradients[(xjump,yjump)]==False:
             gradients[(xjump,yjump)]=True
@@ -49,6 +52,7 @@ print("Part 1:"+str(max_sights)+" ("+str(max_arg[0])+", "+str(max_arg[1])+")")
 
 gradients = [g for g in gradients if g[1]!=0]
 
+# Order by steepness
 gradients.sort(key = lambda x: float(x[0]/x[1]))
 
 gradients = [[-1,0]]+gradients
@@ -78,4 +82,4 @@ while True:
     if len(killed_asteroids)==200:
         break
 
-print(killed_asteroids[-1])
+print("Part 2: "+str(killed_asteroids[-1][1]*100 + killed_asteroids[-1][0]))
