@@ -24,6 +24,7 @@ def concat_layer(top,bot):
 import numpy as np
 import matplotlib.pyplot as plt
 
+#concat the layers top to bottom
 top_layer=[l for l in layers[0]]
 for k in range(len(layers)):
     new_layer=[concat_layer(top_layer[m],layers[k][m]) for m in range(150)]
