@@ -53,26 +53,58 @@ for x in range(width):
 			best= nMon
 			bestx= x
 			besty= y
-print("Part 1",best)
+print("Part 1",best, bestx,besty)
 
 count= 0
+angles=[]
+coords=[]
+for x in range(0,width):
+    for y in range(0,height):
+        if data[y][x] != '#':
+            continue
+        if x == bestx and y == besty:
+            continue
+        angle= math.atan2(x-bestx,besty-y)/math.pi*180
+        if angle< 0:
+            angle+=360
+        #print (x,y,angle)
+        try:
+            i= angles.index(angle)
+            coords[i].append((x,y))
+        except:
+            angles.append(angle)
+            coords.append([(x,y)])
+        
+angle= -1.0
+best= angle
+count= 0
 while True:
-	for xStep in range(0,width):
-		for yStep in range(-height,0):
-
-			if xStep == 0 and yStep != -1:
-				continue
-			if (math.gcd(xStep,yStep) != 1):
-				continue
-			x= bestx
-			y= besty
-			while True:
-				x+= xStep
-				y+= yStep
-				if x >= width or y >= height or x < 0 or y < 0:
-					break
-				if data[y][x] == '#':
-					count+= 1
-					data[y][x]='.'
-					print("Vaporise",y,x)
-					print(count)
+    best= -1
+    besti= 0
+    for i in range(len(angles)):
+        if len(coords[i]) == 0:
+            continue
+        if angles[i] > angle and (best == -1 or angles[i] < best):
+            best= angles[i]
+            besti=  i
+    if best == -1:
+        angle=-1
+        continue
+    angle=best
+    closest= 0
+    closestdist= (bestx-coords[besti][0][0])*(bestx-coords[besti][0][0]) \
+        + (besty-coords[besti][0][1])*(besty-coords[besti][0][1])
+    for i in range(1,len(coords[besti])):
+        dist= (bestx-coords[besti][i][0])*(bestx-coords[besti][i][0]) \
+            + (besty-coords[besti][i][1])*(besty-coords[besti][i][1])
+        if (dist < closestdist):
+            closestdist= dist
+            closest= i
+    
+    count+=1
+# print (count,"Eliminating", best, besti, coords[besti][closest])
+    if count == 200:
+        print (count,"Eliminating", coords[besti][closest])
+        break
+    coords[besti].pop(closest)
+    
