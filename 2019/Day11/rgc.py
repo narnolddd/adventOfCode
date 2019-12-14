@@ -161,8 +161,8 @@ doMachine(sc,0,panels)
 uniq= []
 count= 0
 for p in panels:
-    if not uniq.search(p):
-        uniq.add(p)
+    if p not in uniq:
+        uniq.append(p)
         count+= 1
 print("Part 1",count)
     #printScreen(out)
