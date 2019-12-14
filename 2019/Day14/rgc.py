@@ -21,7 +21,7 @@ def recipe(request,reactions):
 	#print("Recipe incomplete", request,reactions)
 	return []
 
-fp= open("rgctest1.txt","r")
+fp= open("rgcinput.txt","r")
 lines= fp.readlines()
 fp.close()
 reactions=[]
