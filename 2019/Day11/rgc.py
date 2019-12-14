@@ -3,6 +3,15 @@ import sys
 import math
 from itertools import permutations 
 
+def paintPanels(panels,out,x,y):
+    for i in range(len(panels)):
+        p= panels[i]
+        if p[0] == x and p[1] == y:
+            if out == 0:
+                panels.pop(i)
+            return
+    if out == 1:
+        panels.append((x,y))
     
 def calcVal(s,pos,mode,rbase):
     if mode == 0:
@@ -29,14 +38,18 @@ def putVal(s,pos,mode,rbase,val):
     sys.exit()
     
 def getPanels(panels,x,y):
-	for p in panels:
-		if p[0] == x and p[1] == y:
-			return 1
-	return 0
+    for p in panels:
+        if p[0] == x and p[1] == y:
+            return 1
+    return 0
 
-def doMachine(s,rbase,panels,x,y,dirn):
+def doMachine(s,rbase,panels):
+    paintMode=True
     output= []
     pos= 0
+    x=0
+    y=0
+    dirn=0
     inpIndex=0
     inpctr=0
     while(True):
@@ -46,7 +59,7 @@ def doMachine(s,rbase,panels,x,y,dirn):
         mode3= (int(s[pos]/10000))%10
         #print(pos,s[pos],instr,mode1,mode2,mode3)
         if (instr == 99):
-            return (output,rbase,x,y,dirn)
+            return (output,x,y,dirn)
         elif (instr == 1): #add
             x=calcVal(s,pos+1,mode1,rbase)
             y=calcVal(s,pos+2,mode2,rbase)
@@ -67,7 +80,27 @@ def doMachine(s,rbase,panels,x,y,dirn):
         elif (instr == 4): #output
             out=calcVal(s,pos+1,mode1,rbase)
             #print("Output",out)
-            output.append(out)
+            if paintMode:
+                paintMode= False
+                paintPanels(panels,out,x,y)
+            else:
+                paintMode=True
+                if out == 0:
+                    dirn=(dirn-1)%4
+                elif out == 1:
+                    dirn=(dirn+1)%4
+                else:
+                    print("Direction error")
+                if (dirn == 0):
+                    y-=1
+                elif dirn == 1:
+                    x+=1
+                elif dirn == 2:
+                    y+=1
+                elif dirn == 3:
+                    x-=1
+                else:
+                    print("Unnatural direction")
             pos+= 2
         elif (instr == 5): 
             x=calcVal(s,pos+1,mode1,rbase)
@@ -106,7 +139,7 @@ def doMachine(s,rbase,panels,x,y,dirn):
         else:
             print("Did not expect ",s[pos])
             sys.exit()
-    return(output)
+
     #print(s)
     #print("Part 1",s[0])
     
@@ -124,37 +157,13 @@ x=0
 y=0
 dirn=0
 panels=[]
-while True:
-	(out,x,y,dirn)=doMachine(sc,0,panels,x,y,dirn)[0]
-	if len(out) == 0:
-		break
-	assert(len(out)==2)
-	if out[0] == 1:
-		panels.append(x,y)
-	elif out[0] != 0:
-		print("Colour error")
-	if out[1] == 0:
-		dirn=(dirn-1)%4
-	elif out[1] == 1:
-		dirn=(dirn+1)%4
-	else:
-		print("Direction error")
-	if (dirn == 0):
-		y-=1
-	elif dirn == 1:
-		x+=1
-	elif dirn == 2:
-		y+=1
-	elif dirn == 3:
-		x-=1
-	else:
-		print("Unnatural direction")
+doMachine(sc,0,panels)
 uniq= []
 count= 0
 for p in panels:
-	if not uniq.find(p):
-		uniq.add(p)
-		count+= 1
+    if not uniq.search(p):
+        uniq.add(p)
+        count+= 1
 print("Part 1",count)
     #printScreen(out)
 
