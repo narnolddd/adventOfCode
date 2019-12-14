@@ -112,6 +112,7 @@ for i in range(10000):
     s.append(0)
 pos= 0
 rbase= 0
-print(doMachine(s,rbase,2)[0])
-
+scopy=s.copy()
+print(doMachine(s,rbase,1)[0])
+print(doMachine(scopy,rbase,2)[0])
 
