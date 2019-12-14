@@ -3,15 +3,18 @@ import sys
 import math
 from itertools import permutations 
 
-def paintPanels(panels,out,x,y):
-    for i in range(len(panels)):
-        p= panels[i]
+def getPanels(panels,x,y):
+    for p in panels:
         if p[0] == x and p[1] == y:
-            if out == 0:
-                panels.pop(i)
+            return p[2]
+    return 0
+
+def paintPanels(panels,out,x,y):
+    for p in panels:
+        if p[0] == x and p[1] == y:
+            p[2]= out
             return
-    if out == 1:
-        panels.append((x,y))
+    panels.append([x,y,out])
     
 def calcVal(s,pos,mode,rbase):
     if mode == 0:
@@ -35,20 +38,14 @@ def putVal(s,pos,mode,rbase,val):
         s[rbase+s[pos]]= val
         return
     print("Unknown mode",mode)
-    sys.exit()
-    
-def getPanels(panels,x,y):
-    for p in panels:
-        if p[0] == x and p[1] == y:
-            return 1
-    return 0
+    sys.exit()    
 
 def doMachine(s,rbase,panels):
     paintMode=True
     output= []
     pos= 0
-    x=0
-    y=0
+    xpos=0
+    ypos=0
     dirn=0
     inpIndex=0
     inpctr=0
@@ -73,7 +70,7 @@ def doMachine(s,rbase,panels):
                 #print("Mult",res)
         elif (instr == 3): #input
             #printScreen(output)
-            inp= getPanels(panels,x,y)
+            inp= getPanels(panels,xpos,ypos)
             putVal(s,pos+1,mode1,rbase,inp)
             
             pos+=2
@@ -82,7 +79,9 @@ def doMachine(s,rbase,panels):
             #print("Output",out)
             if paintMode:
                 paintMode= False
-                paintPanels(panels,out,x,y)
+                paintPanels(panels,out,xpos,ypos)
+                #print("Paint",out," at ",xpos,ypos)
+                #print(panels)
             else:
                 paintMode=True
                 if out == 0:
@@ -92,15 +91,16 @@ def doMachine(s,rbase,panels):
                 else:
                     print("Direction error")
                 if (dirn == 0):
-                    y-=1
+                    ypos-=1
                 elif dirn == 1:
-                    x+=1
+                    xpos+=1
                 elif dirn == 2:
-                    y+=1
+                    ypos+=1
                 elif dirn == 3:
-                    x-=1
+                    xpos-=1
                 else:
                     print("Unnatural direction")
+                #print("Move",out,"to",dirn,xpos,ypos)
             pos+= 2
         elif (instr == 5): 
             x=calcVal(s,pos+1,mode1,rbase)
@@ -160,10 +160,12 @@ panels=[]
 doMachine(sc,0,panels)
 uniq= []
 count= 0
+#print(panels)
+
 for p in panels:
     if p not in uniq:
         uniq.append(p)
         count+= 1
-print("Part 1",count)
+print("Part 1",len(panels),len(uniq))
     #printScreen(out)
 
