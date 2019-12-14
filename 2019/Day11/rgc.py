@@ -168,4 +168,36 @@ for p in panels:
         count+= 1
 print("Part 1",len(panels),len(uniq))
     #printScreen(out)
+panels=[[0,0,1]]
+sc=s.copy()
+doMachine(sc,0,panels)
+xmin= 0
+ymin=0
+xmax=0
+ymax=0
+for p in panels:
+	if p[2] ==1:
+		if p[0]< xmin:
+			xmin= p[0]
+		if p[0] > xmax:
+			xmax= p[0]
+		if p[1] < ymin:
+			ymin= p[1]
+		if p[1] > ymax:
+			ymax= p[1]
+xr= xmax-xmin+1
+yr= ymax-ymin+1
 
+disp=[]
+for y in range(yr):
+	string=[]
+	for x in range(xr):
+		string.append(" ")
+	disp.append(string)
+for p in panels:
+	if p[2] == 1:
+		disp[p[1]+ymin][p[0]+xmin]="#"
+for d in disp:
+	for c in d:
+		print(c,end="")
+	print()
