@@ -1,15 +1,15 @@
 def increase_by(ic,size):
     increase = size + 1 - len(ic)
-    new_ic = [val for val in ic]+[0 for _ in range(size)]
+    new_ic = ic+[0 for _ in range(increase)]
     ic = new_ic
     return ic
 
 def advance_ic(inputs,ip,ic,rb):
     while ic[ip]!=99:
+        #print(ic)
         #print(ic[:20])
         instruction=("0000"+str(ic[ip]))[-5:]
         p1, p2, p3 = [instruction[2-i] for i in range(3)]
-        adr1, adr2, adr3 = 0,0,0
 
         # first parameter
         if ip+1 >= len(ic):
@@ -39,18 +39,30 @@ def advance_ic(inputs,ip,ic,rb):
         if ip+3 >= len(ic):
             ic = increase_by(ic, ip+3)
         adr3 = ic[ip+3]
+        if p3 == "2":
+            adr3 = rb + ic[ip+3]
 
         op=instruction[3:]
         #print(op)
         if op=="01":
             if adr3>len(ic):
                 ic=increase_by(ic,adr3)
-            ic[adr3]=ic[adr1] + ic[adr2]
+            u1, u2 = 0,0
+            if adr1<len(ic):
+                u1=ic[adr1]
+            if adr2<len(ic):
+                u2=ic[adr2]
+            ic[adr3]=u1 + u2
             ip = ip+4
         elif op=="02":
-            if adr3>len(ic):
+            if adr3>=len(ic):
                 ic=increase_by(ic,adr3)
-            ic[adr3]=ic[adr1] * ic[adr2]
+            u1, u2 = 0,0
+            if adr1<len(ic):
+                u1=ic[adr1]
+            if adr2<len(ic):
+                u2=ic[adr2]
+            ic[adr3]=u1*u2
             ip = ip+4
         elif op=="03":
             if adr1>=len(ic):
@@ -82,13 +94,14 @@ def advance_ic(inputs,ip,ic,rb):
         elif op=="08":
             if adr3>len(ic):
                 ic=increase_by(ic,adr3)
-            if adr1==adr2:
+            if ic[adr1]==ic[adr2]:
                 ic[adr3]=1
                 ip=ip+4
             else:
                 ic[adr3]=0
                 ip=ip+4
         elif op=="09":
+            #print(rb)
             rb = rb + ic[adr1]
             #print("RB "+str(rb))
             ip = ip + 2
@@ -102,7 +115,7 @@ file = "Day9/inputnaomi.txt"
 with open(file,'r') as f:
     ic = list(map(int,f.read().split(',')))
     f.close()
-
+#print(len(ic))
 #ic = [104,1125899906842624,99]
 
 advance_ic([1],0,ic,0)

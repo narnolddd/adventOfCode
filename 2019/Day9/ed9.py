@@ -1,8 +1,8 @@
 import copy
-from itertools import permutations 
-from recordclass import recordclass
+from itertools import permutations
+#from recordclass import recordclass
 
-State = recordclass('State', 'mem pos inputs running los')
+#State = recordclass('State', 'mem pos inputs running los')
 
 ADD = 1
 MUL = 2
@@ -25,7 +25,7 @@ def run(mem, inputs, pos, rbase):
         else:
             op = int("".join(opcode[-2:]))
             if size == 3:
-                p1 = int(opcode[-3]) 
+                p1 = int(opcode[-3])
             elif size == 4:
                 p1 = int(opcode[-3])
                 p2 = int(opcode[-4])
