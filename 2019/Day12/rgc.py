@@ -1,118 +1,108 @@
 #!/usr/bin/env python3
 import sys
 import math
-from itertools import permutations 
+import copy, fractions
 
-def calcVal(s,pos,mode,rbase):
-    if mode == 0:
-        return s[s[pos]]
-    if mode == 1:
-        return s[pos]
-    if mode == 2:
-        return s[rbase+s[pos]]
-    print("Unknown mode",mode)
-    sys.exit()
+def listcomp(x,y):
+    if len(x) != len(y):
+        return False
+    for i in range (len(x)):
+        xel= x[i] 
+        yel= y[i]
+        if len(yel) != len (xel):
+            return False
+        for j in range(len(xel)):
+            if xel[i] != xel[j]:
+                return False
+    return True
 
-def putVal(s,pos,mode,rbase,val):
-    if mode == 0:
-        s[s[pos]]= val
-        return
-    if mode == 1:
-        print("Mode 1 put should not happen")
-        s[pos]= val
-    if mode == 2:
-        #print("Mode 2 put should not happen")
-        s[rbase+s[pos]]= val
-        return
-    print("Unknown mode",mode)
-    sys.exit()
+def parsePlanet(string):
+    string=string[1:len(string)-2]
+    coords=string.split(",")
+    #print(coords)
+    xco=int(coords[0][2:])
+    yco=int(coords[1][3:])
+    zco=int(coords[2][3:])
+    #print(xco,yco,zco)
+    return([xco,yco,zco,0,0,0])
 
-def doMachine(s,rbase,inp):
-    output= []
-    pos= 0
-    while(True):
-        instr=s[pos]%100
-        mode1= (int(s[pos]/100))%10
-        mode2= (int(s[pos]/1000))%10
-        mode3= (int(s[pos]/10000))%10
-        #print(pos,s[pos],instr,mode1,mode2,mode3)
-        if (instr == 99):
-            return (output,rbase,pos)
-        elif (instr == 1): #add
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            putVal(s,pos+3,mode3,rbase,x+y)            
-            pos+=4
-        elif (instr == 2): #mult
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            putVal(s,pos+3,mode3,rbase,x*y)            
-            pos+=4
-                #print("Mult",res)
-        elif (instr == 3): #input
-            if inp == False:
-                print("Out of input")
-            putVal(s,pos+1,mode1,rbase,inp)
-            inp=False
-            pos+=2
-        elif (instr == 4): #output
-            out=calcVal(s,pos+1,mode1,rbase)
-            #print("Output",out)
-            output.append(out)
-            pos+= 2
-        elif (instr == 5): 
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            if (x != 0):
-                pos= y
-            else:
-                pos+=3
-        elif (instr == 6):
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            if (x == 0):
-                pos= y
-            else:
-                pos+=3
-        elif (instr == 7):
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            if (x < y):
-                putVal(s,pos+3,mode3,rbase,1)        
-            else:
-                putVal(s,pos+3,mode3,rbase,0)        
-            pos+=4
-        elif (instr == 8):
-            x=calcVal(s,pos+1,mode1,rbase)
-            y=calcVal(s,pos+2,mode2,rbase)
-            if (x == y):
-                putVal(s,pos+3,mode3,rbase,1)        
-            else:
-                putVal(s,pos+3,mode3,rbase,0)        
-            pos+=4
-        elif (instr == 9):
-            rbase+=calcVal(s,pos+1,mode1,rbase)
-            #print("rbase=",rbase)
-            pos+=2
-        else:
-            print("Did not expect ",s[pos])
-            sys.exit()
-    return(output)
-    #print(s)
-    #print("Part 1",s[0])
-    
 fp= open("rgcinput.txt","r")
-l= fp.readline()
+strings= fp.readlines()
 fp.close()
-s=[]
-for string in l.split(","):
-    s.append(int(string))
-#print(s)
-for i in range(10000):
-    s.append(0)
-pos= 0
-rbase= 0
-scopy=s.copy()
-print(doMachine(s,rbase,1)[0])
-print(doMachine(scopy,rbase,2)[0])
+initplanets=[]
+for s in strings:
+    initplanets.append(parsePlanet(s))
+n= len(initplanets)
+planets=copy.deepcopy(initplanets)
+print(initplanets)
+#for p in planets:
+#    print(p)
+for l in range(1000):
+    for i in range(n):
+        for j in range(i):
+            for k in range(3):
+                if planets[i][k] < planets[j][k]:
+                    planets[i][k+3]+= 1
+                    planets[j][k+3]-= 1
+                if planets[i][k] > planets[j][k]:
+                    planets[i][k+3]-= 1
+                    planets[j][k+3]+= 1
+    for i in range(n):
+        for k in range(3):
+            planets[i][k]+= planets[i][k+3]
+#    print(l)
+#    for p in planets:
+#        print(p)
+energy= 0
+for p in planets:
+    potenergy=0
+    kinenergy=0
+    for k in range(3):
+        if (p[k] < 0):
+            potenergy-= p[k]
+        else:
+            potenergy+= p[k]
+    for k in range(3,6):
+        if (p[k] < 0):
+            kinenergy-= p[k]
+        else:
+            kinenergy+= p[k]
+    energy+=potenergy*kinenergy
+print("part1",energy)
 
+planets=copy.deepcopy(initplanets)
+#print("Planets",planets)
+kloops=[]
+for k in range(3):
+    pslice=[]
+    for p in planets:
+        pslice.append([p[k],p[k+3]])
+
+    count= 0
+    while True:
+        #print(count,pslice)
+        for i in range(n):
+            for j in range(i):
+                if pslice[i][0] < pslice[j][0]:
+                    pslice[i][1]+= 1
+                    pslice[j][1]-= 1
+                if pslice[i][0] > pslice[j][0]:
+                    pslice[i][1]-= 1
+                    pslice[j][1]+= 1
+        for p in pslice:
+            p[0]+=p[1]
+        #print(pslice)
+        count+=1
+        match=True
+        for i in range(len(pslice)):
+            if pslice[i][0] != planets[i][k] or pslice[i][1] != planets[i][k+3]:
+                match=False
+                break
+        if match == True:
+            print("Match at",count)
+            kloops.append(count)
+            break
+c= 1
+for k in kloops:
+    c= c*k/fractions.gcd(c,k)
+print(c)

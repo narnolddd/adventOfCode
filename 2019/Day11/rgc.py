@@ -3,6 +3,18 @@ import sys
 import math
 from itertools import permutations 
 
+def getPanels(panels,x,y):
+    for p in panels:
+        if p[0] == x and p[1] == y:
+            return p[2]
+    return 0
+
+def paintPanels(panels,out,x,y):
+    for p in panels:
+        if p[0] == x and p[1] == y:
+            p[2]= out
+            return
+    panels.append([x,y,out])
     
 def calcVal(s,pos,mode,rbase):
     if mode == 0:
@@ -26,17 +38,15 @@ def putVal(s,pos,mode,rbase,val):
         s[rbase+s[pos]]= val
         return
     print("Unknown mode",mode)
-    sys.exit()
-    
-def getPanels(panels,x,y):
-	for p in panels:
-		if p[0] == x and p[1] == y:
-			return 1
-	return 0
+    sys.exit()    
 
-def doMachine(s,rbase,panels,x,y,dirn):
+def doMachine(s,rbase,panels):
+    paintMode=True
     output= []
     pos= 0
+    xpos=0
+    ypos=0
+    dirn=0
     inpIndex=0
     inpctr=0
     while(True):
@@ -46,7 +56,7 @@ def doMachine(s,rbase,panels,x,y,dirn):
         mode3= (int(s[pos]/10000))%10
         #print(pos,s[pos],instr,mode1,mode2,mode3)
         if (instr == 99):
-            return (output,rbase,x,y,dirn)
+            return (output,x,y,dirn)
         elif (instr == 1): #add
             x=calcVal(s,pos+1,mode1,rbase)
             y=calcVal(s,pos+2,mode2,rbase)
@@ -60,14 +70,37 @@ def doMachine(s,rbase,panels,x,y,dirn):
                 #print("Mult",res)
         elif (instr == 3): #input
             #printScreen(output)
-            inp= getPanels(panels,x,y)
+            inp= getPanels(panels,xpos,ypos)
             putVal(s,pos+1,mode1,rbase,inp)
             
             pos+=2
         elif (instr == 4): #output
             out=calcVal(s,pos+1,mode1,rbase)
             #print("Output",out)
-            output.append(out)
+            if paintMode:
+                paintMode= False
+                paintPanels(panels,out,xpos,ypos)
+                #print("Paint",out," at ",xpos,ypos)
+                #print(panels)
+            else:
+                paintMode=True
+                if out == 0:
+                    dirn=(dirn-1)%4
+                elif out == 1:
+                    dirn=(dirn+1)%4
+                else:
+                    print("Direction error")
+                if (dirn == 0):
+                    ypos-=1
+                elif dirn == 1:
+                    xpos+=1
+                elif dirn == 2:
+                    ypos+=1
+                elif dirn == 3:
+                    xpos-=1
+                else:
+                    print("Unnatural direction")
+                #print("Move",out,"to",dirn,xpos,ypos)
             pos+= 2
         elif (instr == 5): 
             x=calcVal(s,pos+1,mode1,rbase)
@@ -106,7 +139,7 @@ def doMachine(s,rbase,panels,x,y,dirn):
         else:
             print("Did not expect ",s[pos])
             sys.exit()
-    return(output)
+
     #print(s)
     #print("Part 1",s[0])
     
@@ -124,37 +157,47 @@ x=0
 y=0
 dirn=0
 panels=[]
-while True:
-	(out,x,y,dirn)=doMachine(sc,0,panels,x,y,dirn)[0]
-	if len(out) == 0:
-		break
-	assert(len(out)==2)
-	if out[0] == 1:
-		panels.append(x,y)
-	elif out[0] != 0:
-		print("Colour error")
-	if out[1] == 0:
-		dirn=(dirn-1)%4
-	elif out[1] == 1:
-		dirn=(dirn+1)%4
-	else:
-		print("Direction error")
-	if (dirn == 0):
-		y-=1
-	elif dirn == 1:
-		x+=1
-	elif dirn == 2:
-		y+=1
-	elif dirn == 3:
-		x-=1
-	else:
-		print("Unnatural direction")
+doMachine(sc,0,panels)
 uniq= []
 count= 0
-for p in panels:
-	if not uniq.find(p):
-		uniq.add(p)
-		count+= 1
-print("Part 1",count)
-    #printScreen(out)
+#print(panels)
 
+for p in panels:
+    if p not in uniq:
+        uniq.append(p)
+        count+= 1
+print("Part 1",len(panels),len(uniq))
+    #printScreen(out)
+panels=[[0,0,1]]
+sc=s.copy()
+doMachine(sc,0,panels)
+xmin= 0
+ymin=0
+xmax=0
+ymax=0
+for p in panels:
+	if p[2] ==1:
+		if p[0]< xmin:
+			xmin= p[0]
+		if p[0] > xmax:
+			xmax= p[0]
+		if p[1] < ymin:
+			ymin= p[1]
+		if p[1] > ymax:
+			ymax= p[1]
+xr= xmax-xmin+1
+yr= ymax-ymin+1
+
+disp=[]
+for y in range(yr):
+	string=[]
+	for x in range(xr):
+		string.append(" ")
+	disp.append(string)
+for p in panels:
+	if p[2] == 1:
+		disp[p[1]+ymin][p[0]+xmin]="#"
+for d in disp:
+	for c in d:
+		print(c,end="")
+	print()
