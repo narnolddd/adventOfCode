@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import math
-import copy
+import copy, fractions
 
 def listcomp(x,y):
     if len(x) != len(y):
@@ -71,18 +71,16 @@ for p in planets:
 print("part1",energy)
 
 planets=copy.deepcopy(initplanets)
-print("Planets",planets)
+#print("Planets",planets)
 kloops=[]
 for k in range(3):
-    loopStart= 0
-    loopLen=0
     pslice=[]
     for p in planets:
         pslice.append([p[k],p[k+3]])
-    history=[]
-    history.append(copy.deepcopy(pslice))
+
     count= 0
     while True:
+        #print(count,pslice)
         for i in range(n):
             for j in range(i):
                 if pslice[i][0] < pslice[j][0]:
@@ -94,15 +92,17 @@ for k in range(3):
         for p in pslice:
             p[0]+=p[1]
         #print(pslice)
-        for i in range(len(history)):
-            #print("hist i",history[i])
-            if listcomp(history[i],pslice):
-                print("Pslice",pslice)
-                print("History",history[i])
-                loopStart=i
-                loopLen=count-i
+        count+=1
+        match=True
+        for i in range(len(pslice)):
+            if pslice[i][0] != planets[i][k] or pslice[i][1] != planets[i][k+3]:
+                match=False
                 break
-        if loopLen > 0:
+        if match == True:
+            print("Match at",count)
+            kloops.append(count)
             break
-        history.append(copy.deepcopy(pslice))
-    print(loopStart,loopLen)
+c= 1
+for k in kloops:
+    c= c*k/fractions.gcd(c,k)
+print(c)
