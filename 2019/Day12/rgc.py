@@ -3,6 +3,19 @@ import sys
 import math
 import copy
 
+def listcomp(x,y):
+    if len(x) != len(y):
+        return False
+    for i in range (len(x)):
+        xel= x[i] 
+        yel= y[i]
+        if len(yel) != len (xel):
+            return False
+        for j in range(len(xel)):
+            if xel[i] != xel[j]:
+                return False
+    return True
+
 def parsePlanet(string):
     string=string[1:len(string)-2]
     coords=string.split(",")
@@ -66,10 +79,10 @@ for k in range(3):
     pslice=[]
     for p in planets:
         pslice.append([p[k],p[k+3]])
-    history=copy.deepcopy(pslice)
+    history=[]
+    history.append(copy.deepcopy(pslice))
     count= 0
     while True:
-        count+=1
         for i in range(n):
             for j in range(i):
                 if pslice[i][0] < pslice[j][0]:
@@ -80,9 +93,10 @@ for k in range(3):
                     pslice[j][1]+= 1
         for p in pslice:
             p[0]+=p[1]
-        print(pslice)
+        #print(pslice)
         for i in range(len(history)):
-            if history[i] == pslice:
+            #print("hist i",history[i])
+            if listcomp(history[i],pslice):
                 print("Pslice",pslice)
                 print("History",history[i])
                 loopStart=i
@@ -90,5 +104,5 @@ for k in range(3):
                 break
         if loopLen > 0:
             break
-        history.append(pslice.copy())
+        history.append(copy.deepcopy(pslice))
     print(loopStart,loopLen)
