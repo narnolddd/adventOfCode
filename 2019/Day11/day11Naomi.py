@@ -1,3 +1,6 @@
+from collections import defaultdict, deque
+import matplotlib.pyplot as plt
+
 def increase_by(ic,size):
     increase = size + 1 - len(ic)
     new_ic = ic+[0 for _ in range(increase)]
@@ -39,6 +42,8 @@ def advance_ic(inputs,ip,ic,rb):
         if ip+3 >= len(ic):
             ic = increase_by(ic, ip+3)
         adr3 = ic[ip+3]
+        if p3 == "1":
+            adr3 = ip+3
         if p3 == "2":
             adr3 = rb + ic[ip+3]
 
@@ -70,8 +75,8 @@ def advance_ic(inputs,ip,ic,rb):
             ic[adr1]=inputs.pop()
             ip = ip+2
         elif op=="04":
-            print(ic[adr1])
             ip = ip+2
+            return ic[adr1], ic, ip, rb
         elif op=="05":
             if ic[adr1]!=0:
                 ip=ic[adr2]
@@ -108,16 +113,48 @@ def advance_ic(inputs,ip,ic,rb):
         else:
             print('error: instruction reads '+instruction)
             break
-    return None, ic, ip
+    return None, ic, ip, rb
 
-file = "Day9/inputnaomi.txt"
+file = "Day11/inputnaomi.txt"
 
 with open(file,'r') as f:
     ic = list(map(int,f.read().split(',')))
     f.close()
-#print(len(ic))
-#ic = [104,1125899906842624,99]
 
-advance_ic([1],0,ic,0)
+coords=defaultdict(lambda : '.')
 
-advance_ic([2],0,ic,0)
+pos = [0,0]
+coords[(0,0)]='#'
+dir = deque('urdl')
+ip, rb = 0,0
+while True:
+    inp = int(coords[(pos[0],pos[1])]=="#")
+    to_paint_white, ic, ip, rb = advance_ic([inp], ip, ic, rb)
+    if to_paint_white==1:
+        coords[(pos[0],pos[1])]='#'
+    elif to_paint_white==0:
+        coords[(pos[0],pos[1])]='.'
+    else:
+        break
+
+    right, ic, ip, rb = advance_ic([],ip,ic,rb)
+    if right == 0:
+        dir.rotate(1)
+    elif right == 1:
+        dir.rotate(-1)
+    else:
+        break
+
+    if dir[0]=='u':
+        pos[1]+=1
+    elif dir[0]=='l':
+        pos[0]-=1
+    elif dir[0]=='d':
+        pos[1]-=1
+    else:
+         pos[0]+=1
+
+print(len(coords.keys()))
+
+plt.scatter( [pt[0] for pt in coords.keys() if coords[pt]=='#'],[pt[1] for pt in coords.keys() if coords[pt]=='#'])
+plt.show()
