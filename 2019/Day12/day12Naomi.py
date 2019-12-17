@@ -3,8 +3,11 @@ from collections import namedtuple, defaultdict
 import numpy as np
 import math
 
+def lcm(a, b):
+    return int(a * b / math.gcd(a, b))
+
 moons = [np.zeros(6,dtype=int) for _ in range(4)]
-print(moons)
+
 Moon = namedtuple('Moon',['x1','x2','x3','v1','v2','v3'])
 
 regex="<x=(?P<x>.*\d+), y=(?P<y>.*\d+), z=(?P<z>.*\d+)>"
@@ -19,7 +22,7 @@ with open(file,'r') as f:
         match = {k: v for k, v in p.match(line).groupdict().items()}
         moons[i]=np.array([int(match['x']),int(match['y']),int(match['z']),0,0,0])
 
-initial_moons = [moon for moon in moons]
+initial_moons = [moon.copy() for moon in moons]
 
 def apply_gravity(moon1, moon2):
     for dim in range(3):
@@ -52,20 +55,38 @@ for _ in range(nsteps):
 
 print("Part 1: "+str(sum([get_energy(moon) for moon in moons])))
 
-#get repeats
-def get_repeats(moon):
-    moons = [mn for mn in initial_moons]
-    visited = defaultdict(lambda: -1)
-    time = 0
-    while True:
-        pos = (moon[0],moon[1],moon[2],moon[3],moon[4],moon[5])
-        if visited[pos]<0:
-            visited[pos]=time
-        else:
-            print(time)
-            return time
-        time +=1
-        simulate_moons()
+repeats = [[[0] for _ in range(6)] for k in range(4)]
+times = [[[0] for _ in range(6)] for k in range(4)]
 
-repeats = [get_repeats(moon) for moon in initial_moons]
-orbit_time=math.lcm(repeats)
+moons = [moon.copy() for moon in initial_moons]
+initial_pos = [moon.copy() for moon in moons]
+print(initial_pos)
+
+time=0
+while True:
+    simulate_moons()
+    time+=1
+    if time > 500000:
+        break
+    for i in range(4):
+        for d in range(6):
+            if moons[i][d]==initial_pos[i][d]:
+                last_time = times[i][d][-1]
+                times[i][d].append(time)
+                repeats[i][d].append(int(time-last_time))
+
+def find_period(vec):
+    l=len(vec)
+    for k in range(1,l):
+        shifted = vec[:k]+vec[:]
+        repeated = [vec[m]-shifted[m] for m in range(l)]
+        if all([repeated[i]==0 for i in range(l)]):
+            return sum(vec[-k:])
+
+periods = [find_period(vec[1:]) for moon in repeats for vec in moon]
+
+lcm_orbit=1
+for p in periods:
+    lcm_orbit=lcm(lcm_orbit,p)
+
+print(lcm_orbit)
