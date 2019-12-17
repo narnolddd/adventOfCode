@@ -21,17 +21,19 @@ DOWN = 1
 LEFT = 2
 RIGHT = 3 
 cursor = 0
+rela_base = 0
 
 def int_compute(code_list, iter_input):
     #cursor = 0
     global cursor
+    global rela_base
     op_code = code_list[cursor]%100
     output_cnt = 0
     output = []
     #print('op code is: ', op_code, ' cursor is: ',code_list[cursor], code_list[cursor+1],code_list[cursor+2])
-    rela_base = 0
     
     while(op_code in correct_op):
+        #print('op code is: ', op_code, ' cursor is: ',code_list[cursor], code_list[cursor+1],code_list[cursor+2], code_list[cursor+3])
         op_code = code_list[cursor]%100
         op_mode = []
         op_mode_int = code_list[cursor]//100
@@ -112,7 +114,6 @@ def int_compute(code_list, iter_input):
 
         elif(op_code == 4):
             #print('op_mode: ' + str(op_mode))
-            print('op code is: ', op_code, ' cursor is: ',code_list[cursor], code_list[cursor+1])
             if(op_mode[0] == 0):
                 #print("the output value (mode 0): " + str(code_list[code_list[cursor+1]]))
                 if not output_cnt:
@@ -258,7 +259,7 @@ def int_compute(code_list, iter_input):
 
         else:
             if(op_code == 99):
-                print("program halt at: " + str(code_list[cursor-1]), end = ', ')
+                print("program halt at: " + str(code_list[cursor-1]))
                 return -1
         
         op_code = code_list[cursor]%100
@@ -293,8 +294,8 @@ if __name__ == "__main__":
         add.append(0)
     mem.extend(add)
 
-    panel_wide = 600
-    panel_len = 600
+    panel_wide = 60
+    panel_len = 100
     panel = []
     for i in range(panel_len):
         line = []
@@ -302,8 +303,8 @@ if __name__ == "__main__":
             line.append([0,0])
         panel.append(line)
     
-    coord_x = 300
-    coord_y = 300
+    coord_x = 10
+    coord_y = 50
     cur_direction = UP
 
     #the first panel is white (1)
@@ -312,8 +313,6 @@ if __name__ == "__main__":
     
 
     while(cur_output != -1):
-        print('cur: ', mem[cursor], mem[cursor+1], mem[cursor+2], mem[cursor+3])
-        #if (coord_x < panel_wide and coord_y < panel_len):
         panel[coord_y][coord_x][0] = cur_output[0]
         panel[coord_y][coord_x][1] = 1
         next_direction = turn_direc(cur_direction,cur_output[1])
@@ -327,7 +326,7 @@ if __name__ == "__main__":
             coord_x += 1
         else:
             break
-        #print('x = ', coord_x, ' y = ', coord_y)
+        print('x = ', coord_x, ' y = ', coord_y)
         cur_output = int_compute(mem, panel[coord_y][coord_x][0])
         cur_direction = next_direction
         
@@ -339,4 +338,10 @@ if __name__ == "__main__":
             if panel[i][j][1]:
                 all_cnt += 1
 
-    print('the answer is', all_cnt)
+    for i in range(panel_len):
+        for j in range(panel_wide):
+            if(panel[i][j][0] == 1):
+                print('8', end=' ')
+            else:
+                print(' ', end = ' ')
+        print('\n')
