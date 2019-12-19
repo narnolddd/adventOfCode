@@ -201,7 +201,7 @@ while(True):
         break
     if kg > bestkeysgot:
         bestkeysgot= kg
-        print("Got",kg,"from",numkeys,"steps",steps,"size",len(toExplore),order)
+        print("Got",kg,"from",numkeys,"steps",steps,"size",len(toExplore),unorder)
     counted= 0
     for i in range(numkeys):
         kl= keylet(i)
@@ -255,6 +255,6 @@ while(True):
 
 
     assert counted == numkeys
-print(steps,order)
+print("Steps",steps,"Path",unorder)
 
 
