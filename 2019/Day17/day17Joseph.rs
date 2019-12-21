@@ -4,7 +4,7 @@ use std::char;
 
 fn main() {
     // --snip--
-	let filename ="Puzzle17R.txt";
+	let filename ="Puzzle17.txt";
     println!("In file {}", filename);
 
     let contents = fs::read_to_string(filename)
@@ -995,7 +995,11 @@ fn main() {
 		{
 			print!(".");
 		}
-		else
+		else if m.2==94
+		{
+			print!("^");
+		}
+		else 
 		{
 			println!("Unknown character {} detected",m.2);
 		}
@@ -1023,7 +1027,80 @@ fn main() {
 		opCodes.push(0);
 	}
 	opCodes[0]=2;
-
+	let mut inputVec=Vec::new();
+	inputVec.push(65);//A
+	inputVec.push(44);
+	inputVec.push(65);//A
+	inputVec.push(44);
+	inputVec.push(66);//B
+	inputVec.push(44);
+	inputVec.push(67);//C
+	inputVec.push(44);
+	inputVec.push(65);//A
+	inputVec.push(44);
+	inputVec.push(67);//C
+	inputVec.push(44);
+	inputVec.push(66);//B
+	inputVec.push(44);
+	inputVec.push(67);//C
+	inputVec.push(44);
+	inputVec.push(65);//A
+	inputVec.push(44);
+	inputVec.push(66);//B
+	inputVec.push(10);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(52);//4
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(49);//1
+	inputVec.push(48);//0
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(54);//6
+	inputVec.push(10);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(54);//6
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(52);//4
+	inputVec.push(44);
+	inputVec.push(82);//R
+	inputVec.push(44);
+	inputVec.push(56);//8
+	inputVec.push(44);
+	inputVec.push(82);//R 
+	inputVec.push(44);
+	inputVec.push(56);//8
+	inputVec.push(10);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(54);//6
+	inputVec.push(44);
+	inputVec.push(82);//R
+	inputVec.push(44);
+	inputVec.push(56);//8
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(49);//1
+	inputVec.push(48);//0
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(56);//8
+	inputVec.push(44);
+	inputVec.push(76);//L
+	inputVec.push(44);
+	inputVec.push(56);//8
+	inputVec.push(10);
+	inputVec.push(110);//n
+	inputVec.push(10);
+	let mut iIndex=0;
 	'outer2: loop
 	{
 		//println!("OpCode:{}",opCodes[index]);
@@ -1046,6 +1123,8 @@ fn main() {
 		else if opCodes[index]==3
 		{
 			let mut input = 0;
+			input=inputVec[iIndex];
+			iIndex+=1;
 			let outputPosition = opCodes[index+1] as usize;
 			opCodes[outputPosition]=input;
 			println!("Input:{}",input);
@@ -1345,6 +1424,8 @@ fn main() {
 		else if opCodes[index]==203
 		{
 			let mut input = 0;//Input defined in problem statement
+			input=inputVec[iIndex];
+			iIndex+=1;
 			let outputPosition = (relativeBase+opCodes[index+1]) as usize;
 			println!("Input:{}",input);
 			opCodes[outputPosition]=input;
@@ -1734,6 +1815,36 @@ fn main() {
 			}
 			index+=4;
 		}
+		else if opCodes[index]==21207
+		{
+			let outputPosition = (relativeBase+opCodes[index+3]) as usize;
+			let inputPosition1=(relativeBase+opCodes[index+1]) as usize;
+			let inputPosition2=opCodes[index+2];
+			if opCodes[inputPosition1]<inputPosition2
+			{
+				opCodes[outputPosition]=1;
+			}
+			else
+			{
+				opCodes[outputPosition]=0;
+			}
+			index+=4;
+		}
+		else if opCodes[index]==22107
+		{
+			let outputPosition = (relativeBase+opCodes[index+3]) as usize;
+			let inputPosition1=opCodes[index+1];
+			let inputPosition2=(relativeBase+opCodes[index+2]) as usize;
+			if inputPosition1<opCodes[inputPosition2]
+			{
+				opCodes[outputPosition]=1;
+			}
+			else
+			{
+				opCodes[outputPosition]=0;
+			}
+			index+=4;
+		}
 		else if opCodes[index]==8
 		{
 			let outputPosition = opCodes[index+3] as usize;
@@ -1889,6 +2000,21 @@ fn main() {
 		{
 			let outputPosition = (relativeBase+opCodes[index+3]) as usize;
 			let inputPosition1=(relativeBase+opCodes[index+1]) as usize;
+			let inputPosition2=opCodes[index+2] as usize;
+			if opCodes[inputPosition1]==opCodes[inputPosition2]
+			{
+				opCodes[outputPosition]=1;
+			}
+			else
+			{
+				opCodes[outputPosition]=0;
+			}
+			index+=4;
+		}
+		else if opCodes[index]==21208
+		{
+			let outputPosition = (relativeBase+opCodes[index+3]) as usize;
+			let inputPosition1=(relativeBase+opCodes[index+1]) as usize;
 			let inputPosition2=opCodes[index+2];
 			if opCodes[inputPosition1]==inputPosition2
 			{
@@ -1946,6 +2072,10 @@ fn main() {
 		{
 			print!(".");
 		}
+		else if m.2==94
+		{
+			print!("^");
+		}
 		else
 		{
 			println!("Unknown character {} detected",m.2);
@@ -1953,6 +2083,6 @@ fn main() {
 		//print!("{}",char::from_digit(m.2 as u32, 10).unwrap());
 	}
 	println!("");
-	println!("Second Answer: {}",intersectionSum);
+	println!("Second Answer: {}",firstOutput);
 	
 }
