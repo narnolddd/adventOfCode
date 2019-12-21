@@ -16,78 +16,31 @@ def finddot(maze,x,y):
         return (None,None)
     return (dotloc,maze[y][x]+lett)
 
-def getMazeLink(maze,teleports,startLoc,endLoc):
-    links={}
+def getMazeLink(maze,teleports,startloc,endloc):
+    #print("Explore",startLoc,endLoc)
+    links=[]
     explored=[]
     toExplore=[(startloc[0],startloc[1],0)]
     while len(toExplore) != 0:
-        (x,y,steps)=toExplore.pop(0)
-        explored.append((x,y))
-        if (x,y) == endLoc:
-            links[startLoc]= (steps, endLoc)
-        elif (x,y) in teleports:
-            links[startLoc]= (steps+1, teleports[(x,y)][0],teleports[(x,y)][1])
+        (sx,sy,steps)=toExplore.pop(0)
+        assert maze[sy][sx] == '.'
+        explored.append((sx,sy))
+        if (sx,sy) == endloc:
+            links.append((startloc,endloc,False,steps))
+            continue
+        elif (sx,sy) in teleports and (sx,sy) != startloc:
+            links.append((startloc,teleports[(sx,sy)][0],teleports[(sx,sy)][1],steps+1))
+            #print((startLoc,teleports[(x,y)][0],teleports[(x,y)][1],steps+1))
             continue
         for move in [(-1,0),(1,0),(0,1),(0,-1)]:
-            nx=x+move[0]
-            ny=y+move[1]
+            nx=sx+move[0]
+            ny=sy+move[1]
             if maze[ny][nx] == '.' and (nx,ny) not in explored:
                 #print("Exploring",nx,ny)
                 toExplore.append((nx,ny,steps+1))
             #print("Testing",nx,ny)
     return(links)
 
-def exploreMaze(maze,teleports,startloc,endloc):
-    toExplore=[(startloc[0],startloc[1],0)]
-    explored=[]
-    while True:
-        (x,y,steps)=toExplore.pop(0)
-        explored.append((x,y))
-        #print(explored)
-        if (x,y) in teleports:
-            (tx,ty)= teleports[(x,y)][0]
-            if (tx,ty) == endloc:
-                return steps+1
-            toExplore.append((tx,ty,steps+1))
-        for move in [(-1,0),(1,0),(0,1),(0,-1)]:
-            nx=x+move[0]
-            ny=y+move[1]
-            #print("Testing",nx,ny)
-            if (nx,ny) == endloc:
-                return steps+1
-            if maze[ny][nx] == '.' and (nx,ny) not in explored:
-                #print("Exploring",nx,ny)
-                toExplore.append((nx,ny,steps+1))
-
-def exploreRecursiveMaze(maze,teleports,startloc,endloc):
-    toExplore=[(startloc[0],startloc[1],0,0)]
-    explored=[]
-    while True:
-        (x,y,level,steps)=toExplore.pop(0)
-        assert level >= 0
-        assert maze[y][x] == '.'
-        explored.append((x,y,level))
-        if (x,y) in teleports:
-            ((tx,ty),isinner)= teleports[(x,y)]
-            #print("Considering teleport to",tx,ty,"is inner",isinner)
-            if (tx,ty) == endloc and level == 0:
-                print("Won via teleport")
-                return steps+1
-            if isinner:
-                if (tx,ty,level+1) not in explored:
-                    toExplore.append((tx,ty,level+1,steps+1))
-            elif (level > 0) and (tx,ty,level-1) not in explored:
-                toExplore.append((tx,ty,level-1,steps+1))
-        for move in [(-1,0),(1,0),(0,1),(0,-1)]:
-            nx=x+move[0]
-            ny=y+move[1]
-            #print("Testing",nx,ny)
-            if (nx,ny) == endloc and level == 0:
-                return steps+1
-            if maze[ny][nx] == '.' and (nx,ny,level) not in explored:
-                #print("Exploring",nx,ny)
-                toExplore.append((nx,ny,level,steps+1))     
-                
 
 if len(sys.argv) != 2:
     print("Enter input file name as CLI")
@@ -102,6 +55,7 @@ xr=len(maze[0])-1
 endloc=None
 startloc=None
 lettpairs={}
+loc_look={}
 for x in range(1,xr-1):
     for y in range(1,yr-1):
         if str.isupper(maze[y][x]):
@@ -110,6 +64,7 @@ for x in range(1,xr-1):
                 if letts in lettpairs:
                     letts=letts[1]+letts[0]
                 lettpairs[letts]= loc
+                loc_look[loc]=letts
 #print(lettpairs)
 teleports={}
 for l in lettpairs:
@@ -126,18 +81,39 @@ for l in lettpairs:
         else:
             teleports[lettpairs[l]]=(lettpairs[l[1]+l[0]],True)
             #print(x,y,"is inner")
-#print(startloc,endloc)
-#print("Part 1",exploreMaze(maze,teleports,startloc,endloc))
+
 links= getMazeLink(maze,teleports,startloc,endloc)
 for t in teleports:
-    l2= getMazeLink(maze,teleports,t,endloc)
-    for l in l2:
-        links[l]= l2[l]
-g=nx.Graph()
-weights={}
+    #print("Exploring",t)
+    nl=(getMazeLink(maze,teleports,t,endloc))
+    links+=nl
+#print (links)
+g=networkx.Graph()
 for l in links:
-    weights[(l,links[l][1])]= links[l][0] 
-    g.add_edge(l,links[l][1])
-p=networkx.dijkstra_path(g,startloc,endloc)
-print("Part 1",len(p))
-
+    #print(l)
+    (sl,el,isInner,steps)=l
+    g.add_edge((sl[0],sl[1]),(el[0],el[1]),weight= steps)
+p=networkx.dijkstra_path_length(g,startloc,endloc,weight="weight")
+print("Part 1",p)
+maxlev=200
+#guess
+g=networkx.Graph()
+#print("Find",(startloc[0],startloc[1],0),(endloc[0],endloc[1],0))
+for lev in range(maxlev):
+    for l in links:
+        (sl,el,isInner,steps)=l
+        if sl == startloc or el == endloc:
+            if lev == 0:
+                if el == endloc:
+                    g.add_edge((sl[0],sl[1],0),(el[0],el[1],0),weight= steps)
+                else:
+                    g.add_edge((sl[0],sl[1],0),(el[0],el[1],1),weight= steps)
+        elif isInner: 
+            if lev < maxlev -1:
+                g.add_edge((sl[0],sl[1],lev),(el[0],el[1],lev+1),weight= steps)
+        elif lev > 0:
+            g.add_edge((sl[0],sl[1],lev),(el[0],el[1],lev-1),weight= steps)   
+dist=networkx.dijkstra_path_length(g,(startloc[0],startloc[1],0),(endloc[0],endloc[1],0),weight="weight")
+#print("Find",(startloc[0],startloc[1],0),(endloc[0],endloc[1],0))
+path=networkx.dijkstra_path(g,(startloc[0],startloc[1],0),(endloc[0],endloc[1],0),weight="weight")
+print("Part 2",dist,path)
