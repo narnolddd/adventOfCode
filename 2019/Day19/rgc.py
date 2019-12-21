@@ -3,27 +3,20 @@ import sys,math,numpy
 from itertools import permutations 
 
 def testsquare(s,bestx,besty,wid,hei):
+    angles=[]
     sc=s.copy()
     out= doMachine(sc,bestx,besty)
-    if out[0] != 1:
-        print("1",out,bestx,besty)
-        return False
+    angles.append(out[0]==1)
     sc=s.copy()
     out= doMachine(sc,bestx+wid-1,besty)
-    if out[0] != 1:
-        print("2",out,bestx,besty)
-        return False
+    angles.append(out[0]==1)
     sc=s.copy()
     out= doMachine(sc,bestx,besty+hei-1)
-    if out[0] != 1:
-        print("3",out,bestx,besty)
-        return False
+    angles.append(out[0]==1)
     sc=s.copy()
     out= doMachine(sc,bestx+wid-1,besty+hei-1)
-    if out[0] != 1:
-        print("4",out,bestx,besty)
-        return False
-    return True
+    angles.append(out[0]==1)
+    return angles
 
 def calcVal(s,pos,mode,rbase):
     if mode == 0:
@@ -158,51 +151,7 @@ for x in range(50):
 
 
 print("Part1 ",count)
-xr=2000
-yr=2000
-ylow=2000
-yhigh=-0
-for y in range(yr):
-    sc=s.copy()
-    x=xr-1
-    out=doMachine(sc,x,y)
-    if out[0] == 1:
-        #print("Got some out")
-        if y < ylow:
-            ylow=y
-        if y > yhigh:
-            yhigh=y
 
-reqheight=110
-height=yhigh-ylow    
-print(ylow,yhigh,height,reqheight/height)
-
-
-
-reqy=int(ylow*reqheight/(yhigh-ylow))
-reqx=int(reqy*xr/ylow)
-
-bestx=reqx
-besty=reqy
-print(bestx,besty)
-x=bestx
-y=besty
-sys.exit()
-while not testsquare(s,bestx,besty,100,100):
-        bestx+=1
-        besty+=1
-        print("Move out")
-    
-move= True
-while move:
-    move= False
-    if testsquare(s,bestx-1,besty,100,100):
-        bestx-=1
-        move= True
-    if testsquare(s,bestx,besty-1,100,100):
-        besty-=1
-        move= True
-print(bestx,besty)
     
 
 #
