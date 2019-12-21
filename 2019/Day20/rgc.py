@@ -48,6 +48,7 @@ def exploreRecursiveMaze(maze,teleports,startloc,endloc):
         explored.append((x,y,level))
         if (x,y) in teleports:
             ((tx,ty),isinner)= teleports[(x,y)]
+            print("Considering teleport to",tx,ty,"is inner",isinner)
             if (tx,ty) == endloc and level == 0:
                 print("Won via teleport")
                 return steps+1
