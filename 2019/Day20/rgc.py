@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys,math,numpy
 from itertools import permutations 
-
+import networkx
 def finddot(maze,x,y):
     dotloc=None
     lett=None
@@ -15,7 +15,28 @@ def finddot(maze,x,y):
     if dotloc == None or lett == None:
         return (None,None)
     return (dotloc,maze[y][x]+lett)
-            
+
+def getMazeLink(maze,teleports,startLoc,endLoc):
+    links={}
+    explored=[]
+    toExplore=[(startloc[0],startloc[1],0)]
+    while len(toExplore) != 0:
+        (x,y,steps)=toExplore.pop(0)
+        explored.append((x,y))
+        if (x,y) == endLoc:
+            links[startLoc]= (steps, endLoc)
+        elif (x,y) in teleports:
+            links[startLoc]= (steps+1, teleports[(x,y)][0],teleports[(x,y)][1])
+            continue
+        for move in [(-1,0),(1,0),(0,1),(0,-1)]:
+            nx=x+move[0]
+            ny=y+move[1]
+            if maze[ny][nx] == '.' and (nx,ny) not in explored:
+                #print("Exploring",nx,ny)
+                toExplore.append((nx,ny,steps+1))
+            #print("Testing",nx,ny)
+    return(links)
+
 def exploreMaze(maze,teleports,startloc,endloc):
     toExplore=[(startloc[0],startloc[1],0)]
     explored=[]
@@ -48,12 +69,13 @@ def exploreRecursiveMaze(maze,teleports,startloc,endloc):
         explored.append((x,y,level))
         if (x,y) in teleports:
             ((tx,ty),isinner)= teleports[(x,y)]
-            print("Considering teleport to",tx,ty,"is inner",isinner)
+            #print("Considering teleport to",tx,ty,"is inner",isinner)
             if (tx,ty) == endloc and level == 0:
                 print("Won via teleport")
                 return steps+1
-            if isinner and (tx,ty,level+1) not in explored:
-                toExplore.append((tx,ty,level+1,steps+1))
+            if isinner:
+                if (tx,ty,level+1) not in explored:
+                    toExplore.append((tx,ty,level+1,steps+1))
             elif (level > 0) and (tx,ty,level-1) not in explored:
                 toExplore.append((tx,ty,level-1,steps+1))
         for move in [(-1,0),(1,0),(0,1),(0,-1)]:
@@ -105,6 +127,17 @@ for l in lettpairs:
             teleports[lettpairs[l]]=(lettpairs[l[1]+l[0]],True)
             #print(x,y,"is inner")
 #print(startloc,endloc)
-print("Part 1",exploreMaze(maze,teleports,startloc,endloc))
+#print("Part 1",exploreMaze(maze,teleports,startloc,endloc))
+links= getMazeLink(maze,teleports,startloc,endloc)
+for t in teleports:
+    l2= getMazeLink(maze,teleports,t,endloc)
+    for l in l2:
+        links[l]= l2[l]
+g=nx.Graph()
+weights={}
+for l in links:
+    weights[(l,links[l][1])]= links[l][0] 
+    g.add_edge(l,links[l][1])
+p=networkx.dijkstra_path(g,startloc,endloc)
+print("Part 1",len(p))
 
-print("Part 2",exploreRecursiveMaze(maze,teleports,startloc,endloc))
