@@ -135,16 +135,29 @@ outqueue=[]
 for m in range(50):
     (out,startpos[m],rbase[m])= doMachine(machines[m],[m],startpos[m],rbase[m])
     outqueue+=out
-while len(outqueue) != 0:
-    m= outqueue.pop(0)
-    if m == -1:
-        continue
-    x=outqueue.pop(0)
-    y=outqueue.pop(0)
-    if m == 255:
-        print("Part 1",x,y)
+natmem=[0,0]
+firstNat=True
+natlist=[]
+while True:
+    while len(outqueue) != 0:
+        m= outqueue.pop(0)
+        if m == -1:
+            continue
+        x=outqueue.pop(0)
+        y=outqueue.pop(0)
+        if m == 255:
+            if firstNat:
+                print("Part 1",x,y)
+                firstNat=False
+            natmem=[x,y]
+            continue
+        #print("Send to machine ",m,x,y)
+        (out,startpos[m],rbase[m])= doMachine(machines[m],[x,y],startpos[m],rbase[m])
+        outqueue+=out
+    if natmem[1] in natlist:
+        print("Part 2",natmem[1])
         break
-    #print("Send to machine ",m,x,y)
-    (out,startpos[m],rbase[m])= doMachine(machines[m],[x,y],startpos[m],rbase[m])
-    #outqueue+=out
-    print(len(outqueue),len(out))
+    natlist.append(natmem[1])
+    (out,startpos[0],rbase[0])= doMachine(machines[0],[natmem[0],natmem[1]],startpos[0],rbase[0])
+    outqueue+=out
+    
