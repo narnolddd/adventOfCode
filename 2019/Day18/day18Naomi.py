@@ -49,5 +49,38 @@ def traverse_maze(pos,weight,node):
         traverse_maze(dir,current_weight+1,current_node)
 
 traverse_maze((start[0],start[1]),0,'@')
-print(G.edges())
-print(weights)
+
+def get_length(chain):
+    total = 0
+    for i in range(len(chain)-1):
+        total+= weights[(chain[i],chain[i+1])]
+
+orderings = {}
+for n in G.nodes():
+    orderings[n]=[]
+
+def BFS(startnode, distance, visited_nodes,distances):
+    visited_nodes[startnode]=True
+    neighbours = G.neighbors(startnode)
+    distance+=1
+    for n in neighbours:
+        if visited_nodes[n]==True:
+            continue
+        visited_nodes[n]=True
+        orderings[startnode].append(n)
+        #distances[n]=distance
+        BFS(n,distance,visited_nodes,distances)
+
+BFS('@',0,defaultdict(lambda: False),0)
+
+best_length, best_sol = -1, []
+
+for n in orderings.keys():
+    if n=='@':
+        orderings[n]=[k for k in orderings[n] if k.islower()]
+        continue
+    if n.isupper():
+        while n.lower() in orderings[n]:
+            orderings[n].remove(n.lower())
+
+def go_for_it(start,visited):
