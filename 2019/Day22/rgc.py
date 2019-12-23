@@ -2,6 +2,24 @@
 import sys,math,numpy
 from itertools import permutations 
 
+def reverseCut(n,pos,decklen):
+    if n >= 0:
+        if pos > decklen-1-n:
+            return pos-(decklen-1-n)
+        return pos+n
+    if pos > decklen-1+n:
+        return pos+n
+    return pos-(decklen-1+n)
+            
+
+def reverseIncrement(n,pos,decklen):
+    add=pos%n
+    if 
+    return pos
+    
+def returnStack(pos,decklen):
+    return decklen-1-pos
+
 def cut(n,deck):
     #print("cut",n)
     deck=deck[n:]+deck[:n]
@@ -48,3 +66,20 @@ for l in lines:
         print("Don't know shuffle",l)
 #print(deck)
 print(deck.index(2019))
+
+decklen=100007
+startpos=6978
+for l in reversed(lines):
+    l=l.split(" ")
+    if (l[0] == "cut"):
+        pos= reverseCut(int(l[1]),pos,decklen)
+    elif l[0] == "deal":
+        if l[1] == "with":
+            pos= reverseIncrement(int(l[3]),pos,decklen)
+        elif l[1] == "into":
+            pos= reverseStack(pos,decklen)
+        else:
+            print("Don't know deal")
+            sys.exit()
+    else:
+        print("Don't know shuffle",l)
