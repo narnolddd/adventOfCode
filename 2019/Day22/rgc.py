@@ -13,11 +13,11 @@ def reverseCut(n,pos,decklen):
             
 
 def reverseIncrement(n,pos,decklen):
-    add=pos%n
-    if 
+    pos+=decklen*pos/(decklen-n)
+    pos/=n
     return pos
     
-def returnStack(pos,decklen):
+def reverseStack(pos,decklen):
     return decklen-1-pos
 
 def cut(n,deck):
@@ -67,8 +67,14 @@ for l in lines:
 #print(deck)
 print(deck.index(2019))
 
+d2=list(range(10))
+d2=increment(7,d2)
+print(d2)
+for i in range(10):
+    print(reverseIncrement(7,d2[i],10))
+sys.exit()
 decklen=100007
-startpos=6978
+pos=6978
 for l in reversed(lines):
     l=l.split(" ")
     if (l[0] == "cut"):
