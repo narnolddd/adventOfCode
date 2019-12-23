@@ -25,7 +25,8 @@ def get_inverse(a,n):
         n,a = a, r
     return(ts[len(ss)-1]%size)
 
-
+# evaluates f(index) = A*index + B (mod size) - performs
+# multiplication by successive addition
 def evaluate(fun, size, index):
     val = 0
     x = to_binary(abs(fun[0]))
@@ -42,8 +43,6 @@ def evaluate(fun, size, index):
         val = (size - val)%size
     val = (val + fun[1])%size
     return val
-
-# Part 1
 
 file = "Day22/inputnaomi.txt"
 
@@ -66,7 +65,8 @@ def perform_shuffle(size):
         f.close()
     return fun
 
-# part 1
+# Part 1
+
 shuffle1 = perform_shuffle(10007)
 print("Part 1: "+str(evaluate(shuffle1,10007,2019)))
 
@@ -78,7 +78,7 @@ shuffle2 = perform_shuffle(new_size)
 x2 = to_binary(shuffle_times)
 compositions = []
 fun = shuffle2
-# repeated squaring to get f^{2^n}
+# repeated squaring to get f^{2^n}(X)
 for l in range(len(x2)):
     compositions.append(fun)
     fun = compose(fun, fun,new_size)
@@ -88,6 +88,7 @@ for l in range(len(x2)):
     if x2[l]=='1':
         fun = compose(compositions[len(x2)-1-l],fun,new_size)
 
+# Apply inverse of this function to element 2020
 multiplier = get_inverse(fun[0]%new_size,new_size)
 inverse_2020 = ((2020 - fun[1])%new_size)*multiplier % new_size
-print(inverse_2020)
+print("Part 2: "+str(inverse_2020))
