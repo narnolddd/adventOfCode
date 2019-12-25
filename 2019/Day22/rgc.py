@@ -3,14 +3,30 @@ import sys,math,numpy
 from itertools import permutations 
 
 def reverseCut(n,pos,decklen):
+    print("Reverse cut")
     return (pos+n)%decklen
     
+    
+#0123456789
+#m=in%d
+#m+cd=in
+#i=m/n+cd/n
+def lcm(n,m):
+    return(n*m/math.gcd(n,m))
 
 def reverseIncrement(n,pos,decklen):
-    npos=floor(pos/n)
-    return npos
+    print("reverse inc")
+    base=int(math.floor(pos/n))
+    excess=int(round((pos/n-base)*n))
+    pos=base
+    if excess> 0:
+        pos+=decklen*(n-excess)
+    #print("Reverse inc",n,pos,excess)
+    #print("pos=",pos)
+    return int(round(pos/n))
     
 def reverseStack(pos,decklen):
+    print("Reverse stack")
     return decklen-1-pos
 
 def cut(n,deck):
@@ -59,11 +75,6 @@ for l in lines:
         print("Don't know shuffle",l)
 #print(deck)
 print("Part 1",deck.index(2019))
-
-pos=reverseCut(-9110,6978,decklen)
-print("Back one step",pos)
-pos=reverseIncrement(70,pos,decklen)
-print("Back two steps",pos)
 
 pos= 6978
 plist=[pos]
