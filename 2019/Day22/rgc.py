@@ -6,25 +6,13 @@ def reverseCut(n,pos,decklen):
 #    print("Reverse cut")
     return (pos+n)%decklen
 
-def invert(a,n):
-    size=n
-    qs=[0,0]
-    rs=[0,0]
-    ss, ts=[1,0], [0,1]
-    k=2
-    while True:
-        q, r = int(n/a), n%a
-        qs.append(q)
-        rs.append(r)
-        if r == 0:
-            break
-        ss.append(ss[k-2]-qs[k]*ss[k-1])
-        ts.append(ts[k-2]-qs[k]*ts[k-1])
-        k+=1
-        n,a = a, r
-    return(ts[len(ss)-1]%size)
+def egcd(a, b):
+	if a == 0:
+		return (b, 0, 1)
+	else:
+		gcd, x, y = egcd(b % a, a)
+		return (gcd, y - (b//a) * x, x)
 
-    
 #0123456789
 #m=in%d
 #m+cd=in
@@ -117,7 +105,7 @@ for l in lines:
     mult= mult%decklen
     add= add%decklen
 
-print(mult,add)
+#print(mult,add)
 binrep= list(bin(shuffles)[2:])
 powm= mult
 powa= add
@@ -126,7 +114,7 @@ for l in range(len(binrep)):
     powfun.append((powm,powa))
     powa=((powm+1)*powa)%decklen
     powm=(powm*powm)%decklen
-print(powm,powa)
+#print(powm,powa)
 mult=1
 add= 0
 for l in range(len(binrep)):
@@ -137,8 +125,6 @@ for l in range(len(binrep)):
         add+=powfun[p][1]
     mult=mult%decklen
     add=add%decklen
-
-print(mult,add)
-invmult= invert(mult,decklen)
+(_,invmult,_)=egcd(mult,decklen)
 newpos=(2020-add)*invmult%decklen
 print("Part 2",newpos)
