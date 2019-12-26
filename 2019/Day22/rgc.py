@@ -3,7 +3,7 @@ import sys,math,numpy
 from itertools import permutations 
 
 def reverseCut(n,pos,decklen):
-    print("Reverse cut")
+#    print("Reverse cut")
     return (pos+n)%decklen
     
     
@@ -15,18 +15,17 @@ def lcm(n,m):
     return(n*m/math.gcd(n,m))
 
 def reverseIncrement(n,pos,decklen):
-    print("reverse inc")
-    base=int(math.floor(pos/n))
-    excess=int(round((pos/n-base)*n))
-    pos=base
-    if excess> 0:
-        pos+=decklen*(n-excess)
-    #print("Reverse inc",n,pos,excess)
-    #print("pos=",pos)
-    return int(round(pos/n))
+#    print ("Reverse inc",n,pos)
+    cval=0
+    for c in range(n):
+        if (c*decklen+pos)%n == 0:
+            cval=c
+            break
+    
+    return int(round((cval*decklen+pos)/n))
     
 def reverseStack(pos,decklen):
-    print("Reverse stack")
+#    print("Reverse stack")
     return decklen-1-pos
 
 def cut(n,deck):
@@ -59,7 +58,7 @@ deck=list(range(decklen))
 
 s=sum(deck)
 for l in lines:
-    print(deck.index(2019),end=" ")
+    #print(deck.index(2019),end=" ")
     l=l.split(" ")
     if (l[0] == "cut"):
         deck= cut(int(l[1]),deck)
@@ -75,13 +74,14 @@ for l in lines:
         print("Don't know shuffle",l)
 #print(deck)
 print("Part 1",deck.index(2019))
-
-pos= 6978
+shuffles= 101741582076661
+decklen= 119315717514047
+pos= 2020
+start= 2020
 plist=[pos]
 i=0
 while True:
     for l in reversed(lines):
-        print(pos,end=" ")
         l=l.split(" ")
         if (l[0] == "cut"):
             pos= reverseCut(int(l[1]),pos,decklen)
@@ -95,14 +95,15 @@ while True:
                 sys.exit()
         else:
             print("Don't know shuffle",l)
-        
-    sys.exit()
     if pos in plist:
         print("Got loop at ",i,plist.index(pos))
-        print(plist[1])
+        rem= shuffles%i
+        print("Part 2",plist[rem])
         sys.exit()
     plist.append(pos)
-    print(pos)
+    #print(pos)
+    if i%10000==0:
+        print(i,pos)
     i+=1
     
 print(pos)
