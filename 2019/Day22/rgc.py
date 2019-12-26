@@ -5,7 +5,25 @@ from itertools import permutations
 def reverseCut(n,pos,decklen):
 #    print("Reverse cut")
     return (pos+n)%decklen
-    
+
+def invert(a,n):
+    size=n
+    qs=[0,0]
+    rs=[0,0]
+    ss, ts=[1,0], [0,1]
+    k=2
+    while True:
+        q, r = int(n/a), n%a
+        qs.append(q)
+        rs.append(r)
+        if r == 0:
+            break
+        ss.append(ss[k-2]-qs[k]*ss[k-1])
+        ts.append(ts[k-2]-qs[k]*ts[k-1])
+        k+=1
+        n,a = a, r
+    return(ts[len(ss)-1]%size)
+
     
 #0123456789
 #m=in%d
@@ -76,34 +94,51 @@ for l in lines:
 print("Part 1",deck.index(2019))
 shuffles= 101741582076661
 decklen= 119315717514047
-pos= 2020
-start= 2020
-plist=[pos]
-i=0
-while True:
-    for l in reversed(lines):
-        l=l.split(" ")
-        if (l[0] == "cut"):
-            pos= reverseCut(int(l[1]),pos,decklen)
-        elif l[0] == "deal":
-            if l[1] == "with":
-                pos= reverseIncrement(int(l[3]),pos,decklen)
-            elif l[1] == "into":
-                pos= reverseStack(pos,decklen)
-            else:
-                print("Don't know deal")
-                sys.exit()
+
+mult=1
+add=0
+for l in lines:
+    l=l.split(" ")
+    if (l[0] == "cut"):
+        add-=int(l[1])
+    elif l[0] == "deal":
+        if l[1] == "with":
+            mult*=int(l[3])
+            add*=int(l[3])
+        elif l[1] == "into":
+            mult*=-1
+            add*=-1
+            add-=1
         else:
-            print("Don't know shuffle",l)
-    if pos in plist:
-        print("Got loop at ",i,plist.index(pos))
-        rem= shuffles%i
-        print("Part 2",plist[rem])
-        sys.exit()
-    plist.append(pos)
-    #print(pos)
-    if i%10000==0:
-        print(i,pos)
-    i+=1
-    
-print(pos)
+            print("Don't know deal")
+            sys.exit()
+    else:
+        print("Don't know shuffle",l)
+    mult= mult%decklen
+    add= add%decklen
+
+print(mult,add)
+binrep= list(bin(shuffles)[2:])
+powm= mult
+powa= add
+powfun=[]
+for l in range(len(binrep)):
+    powfun.append((powm,powa))
+    powa=((powm+1)*powa)%decklen
+    powm=(powm*powm)%decklen
+print(powm,powa)
+mult=1
+add= 0
+for l in range(len(binrep)):
+    if binrep[l] == '1':
+        p=len(binrep)-l-1
+        mult*=powfun[p][0]
+        add*=powfun[p][0]
+        add+=powfun[p][1]
+    mult=mult%decklen
+    add=add%decklen
+
+print(mult,add)
+invmult= invert(mult,decklen)
+newpos=(2020-add)*invmult%decklen
+print("Part 2",newpos)
