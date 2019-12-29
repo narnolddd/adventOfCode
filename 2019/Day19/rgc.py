@@ -139,6 +139,8 @@ for i in range(10000):
     s.append(0)
 count= 0
 
+valid_start=[]
+
 beam=numpy.zeros((50,50))
 for x in range(50):
     for y in range(50):
@@ -148,10 +150,87 @@ for x in range(50):
         if out[0] == 1:
             beam[x][y] = 1
             count+=1
+            if (x == 49 or y == 49):
+                valid_start.append((x,y))
 
 
 print("Part1 ",count)
 
-    
+(validx,validy)=valid_start[int(len(valid_start)/2)]
 
-#
+wiggle_dist= 10
+
+
+hei=100
+wid=100
+
+
+while True:
+    testx=validx+wiggle_dist
+    testy=validy+wiggle_dist
+    (nw1,ne1,sw1,se1)=testsquare(s,testx,testy,wid,hei)
+    #print(validx,validy,wiggle_dist,nw1,ne1,sw1,se1)
+    if nw1 == True and ne1 == True and sw1 == True:
+        #print("All true at",testx,testy)
+        if wiggle_dist == 1:
+            break
+        wiggle_dist-=1
+        continue
+    testx=validx
+    testy=validy+wiggle_dist
+    (nw2,ne2,sw2,se2)=testsquare(s,testx,testy,wid,hei)
+    if nw2 == True and ne2 == True and sw2 == True:
+        if wiggle_dist == 1:
+            break
+        wiggle_dist-=1
+        continue
+    testx=validx+wiggle_dist
+    testy=validy
+    (nw3,ne3,sw3,se3)=testsquare(s,testx,testy,wid,hei)
+    if nw3 == True and ne3 == True and sw3 == True:
+        if wiggle_dist == 1:
+            break
+        wiggle_dist-=1
+        continue
+    if nw1 == True:
+        if ne1 == False and sw1 == False:
+            validx= validx+wiggle_dist
+            validy= validy+wiggle_dist
+            continue
+        if ne1 == False and nw1 == True:
+            validx= validx
+            validy= validy+wiggle_dist
+            continue
+        if ne1 == True and sw1 == False:
+            validx= validx+wiggle_dist
+            validy= validy
+            continue
+    if nw2 == True:
+        validx= validx
+        validy= validy+wiggle_dist
+        print("2",(nw2,ne2,sw2,se2))
+        continue
+    if nw3 == True:
+        validx= validx+wiggle_dist
+        validy= validy
+        continue
+    if wiggle_dist == 1:
+        print ("Wiggle stopping -- this is probably a problem")
+    wiggle_dist-=1
+#print(validx,validy)
+
+moved= True
+while moved:
+    moved= False
+    for dirn in [(-2,-2),(-2,-1),(-1,-2),(-1,-1),(-2,0),(0,-2),(-1,0),(0,-1)]:
+        testx= validx+dirn[0]
+        testy= validy+dirn[1]
+        (nw1,ne1,sw1,se1)=testsquare(s,testx,testy,wid,hei) 
+        if nw1 == True and ne1 == True and sw1 == True:
+            validx= testx
+            validy= testy
+            moved= True
+            break
+            
+print("Part 2:",validx*10000+validy)
+
