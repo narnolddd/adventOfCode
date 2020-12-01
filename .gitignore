@@ -1,3 +1,6 @@
 *Day*/input*.txt
 util/sessionid.txt
 .DS_Store
+*.iml
+2020/out
+2020/.idea
