@@ -10,4 +10,3 @@ for i in range(len(data_list)):
                 result = data_list[i]*data_list[j]*data_list[k]
 
 print(result)
-
