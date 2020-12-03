@@ -4,3 +4,4 @@ util/sessionid.txt
 *.iml
 2020/out
 2020/.idea
+*input*.txt
