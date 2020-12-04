@@ -30,8 +30,8 @@ object rgc {
             }
         }
         
-        println("Part 1 count:",count)
-        println("Part 2 count:",scount)
+        println("Part 1 count",count)
+        println("Part 2 count",scount)
     }
     
     // Parse an array of strings to get 
