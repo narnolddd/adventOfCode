@@ -2,6 +2,7 @@
 util/sessionid.txt
 .DS_Store
 *.iml
+*.class
 2020/out
 2020/.idea
 *input*.txt
