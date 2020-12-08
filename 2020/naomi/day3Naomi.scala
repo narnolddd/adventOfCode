@@ -1,12 +1,8 @@
-package Day03
+package naomi
 
 import scala.io.Source
 
-object day3Naomi {
-  def main(args: Array[String]) = {
-    part1()
-    part2()
-  }
+class day3Naomi extends PuzzleSolver{
 
   def extractEntries() : Any = {
     val fileName = "Day03/inputnaomi.txt"

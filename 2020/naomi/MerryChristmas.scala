@@ -1,5 +1,8 @@
+package naomi
+
 object MerryChristmas {
   def main(args: Array[String]) = {
-    println("ho ho ho!!")
+    val ps = new day4Naomi
+    ps.execute()
   }
 }

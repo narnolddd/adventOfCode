@@ -1,13 +1,9 @@
-package Day02
+package naomi
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-object day2Naomi {
-  def main(args: Array[String]) = {
-    part1()
-    part2()
-  }
+class day2Naomi extends PuzzleSolver {
 
   def extractEntries() : Any = {
     val fileName = "Day02/inputnaomi.txt"
