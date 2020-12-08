@@ -29,7 +29,7 @@ object rgc {
             //for (v <- toVisit) {
                 //print(v+" ")
             //}
-            println()
+            //println()
         }
         //for (v <-visited) {
             //println(v)
