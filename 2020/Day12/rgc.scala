@@ -47,13 +47,13 @@ object rgc {
             case 'W' => waypoint= List(waypoint(0),waypoint(1)-num);  List(0,0)
             case 'R' => num match {
                 case 90 => waypoint= List(-waypoint(1),waypoint(0));  List(0,0)
-                case 180 => waypoint= List(-waypoint(1),-waypoint(0));  List(0,0)
+                case 180 => waypoint= List(-waypoint(0),-waypoint(1));  List(0,0)
                 case 270 => waypoint= List(waypoint(1),-waypoint(0));  List(0,0)
                 case _ => println("Rotation error "+dirn); List(0,0)
             }
             case 'L' => num match {
                 case 270 => waypoint= List(-waypoint(1),waypoint(0));  List(0,0)
-                case 180 => waypoint= List(-waypoint(1),-waypoint(0));  List(0,0)
+                case 180 => waypoint= List(-waypoint(0),-waypoint(1));  List(0,0)
                 case 90 => waypoint= List(waypoint(1),-waypoint(0));  List(0,0)
                 case _ => println("Rotation error "+dirn); List(0,0)
             }
